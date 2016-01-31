@@ -1,0 +1,232 @@
+<?php
+$layout = new \Application\Components\Helper\LayoutHelper();
+$layout->setFormArray($this->query);
+?>
+<section role="main" id="main">
+    <section class="container">
+        <section class="row featured-items">
+
+            <?= $this->partial('user/user/partial/top_message.phtml'); ?>
+            <?php
+                $pakiet = $this->getRepos('Company\Entity\BundleDetails')->find($this->bundlePayments->getPakiet());
+            ?>
+            <div class="toolbar">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li class="active"><a href="/user/login" class=" active">Firma</a></li>
+                    <li class="active"><a href="/user/profile" class=" active">Profil</a></li>
+                </ol>
+            </div>
+            <div class="wrapper">
+                <div class="primary">
+                    <section class="module">
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>Lista moich ogłoszeń</h5>
+
+                            <div class="ibox-tools">
+                                <button type="button" link="<?= $this->url('advert/dashboard') ?>" class="buttonPoint btn btn-primary btn-xs pull-right">Zarządzanie Ogłoszeniami</button>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <div class="project-list">
+                                <?php if (!$this->adverts): ?>
+                                    <div class="alert alert-info text-center info-message-content mar-top15 mar-bottom15">
+                                        <p>Obecnie nie posiadasz żadnego ogłoszenia.</p>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($this->alert): ?>
+                                    <div class="alert alert-<?= $this->alert['alert']; ?> text-center info-message-content mar-top15 mar-bottom15">
+                                        <p><?= $this->alert['message']; ?></p>
+                                    </div>
+                                <?php endif; ?>
+
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr class="header-table">
+                                        <th>Status</th>
+                                        <th>Dane ogłoszenia</th>
+                                        <th>Kwoty</th>
+                                        <th>Oferty</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    <?php foreach ($this->adverts as $advert): ?>
+                                        <tr>
+                                            <td class="project-status">
+                                                <?php $activeType = \Advert\Entity\Advert::getActiveType($advert->getActive()); ?>
+                                                <span class="label label-<?= $activeType->label; ?>"><?= $activeType->name; ?></span>
+                                            </td>
+                                            <td class="project-title">
+                                                <a href="<?= $this->url('advert/view', array('id' => $advert->getId(), 'url' => $advert->getUrl())); ?>"><img
+                                                        class="img-circle pull-left" alt=""
+                                                        src="<?= $this->basePath() . Advert\Entity\Image::IMAGE_PATH_VIEW . $advert->getCompanyId() . DIRECTORY_SEPARATOR . $advert->getImages()->get(0)->getName(); ?>"></a>
+
+                                                <div class="mar-left10 pull-left">
+                                                    <a class="name" href="<?= $this->url('advert/view', array('id' => $advert->getId(), 'url' => $advert->getUrl())); ?>"><?= $advert->getName(); ?></a>
+                                                    <br>
+
+                                                    <div class="small-info">
+                                                        <small>Zakończenie: <span
+                                                                class="<?php if ($advert->isLessOneDay()): ?>red-color<?php endif; ?>"><?= $advert->getHoursToFinishAdvert(); ?></span>
+                                                        </small>
+                                                        <small class="space-line"> |</small>
+                                                        <small>Kategoria: <a href="<?= $this->url('advert/sublist', array('id' => $advert->getCategory()->getId(), 'url' => $advert->getCategory()->getUrl())); ?>"><?= $advert->getCategory()->getName(); ?></a></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="project-completion">
+                                                <small class="first-amount">Najwyższa Oferta:
+                                                    <strong>PLN <?= $advert->getAmount() + 200; ?></strong></small>
+                                                <br/>
+                                                <small class="second-amount">Cena:
+                                                    <strong>PLN <?= $advert->getAmount(); ?></strong></small>
+                                            </td>
+                                            <?php $query = $this->getRepos()->createQuery('SELECT COUNT(o.id) FROM Advert\Entity\Offer o WHERE o.advert_id = '. $advert->getId()); ?>
+                                            <?php $offerCount = $query->getSingleScalarResult(); ?>
+                                            <td><span class="labelbox <?php echo $offerCount > 0 ? 'green' : 'grey'; ?>"><?= $offerCount; ?></span></td>
+                                            <td class="project-actions">
+                                                <?php if($advert->getActive() == \Advert\Entity\Advert::ADVERT_FINISH): ?>
+                                                    <a href="<?= $this->url('advert/edit', array('id' => $advert->getId())) ?>"
+                                                       class="btn btn-primary btn-xs pull-right">Transakcja</a>
+                                                <?php else: ?>
+                                                    <?php if(!$advert->isLessThen(3)): ?>
+                                                        <a href="<?= $this->url('advert/delete', array('id' => $advert->getId())) ?>"
+                                                           type="button" class="btn btn-xs btn-danger mar-left5 pull-right">Usuń</a>
+                                                        <a href="<?= $this->url('advert/edit', array('id' => $advert->getId())) ?>"
+                                                           class="btn btn-white btn-xs pull-right">Edytuj</a>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>Moje Transakcje</h5>
+
+                            <div class="ibox-tools">
+                                <button type="button" link="<?= $this->url('advert/add'); ?>"
+                                        class="buttonPoint btn btn-primary btn-xs pull-right">Dodaj Ogłoszenie
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ibox-content">
+
+                            <div class="project-list">
+                                <?php if (!$this->adverts): ?>
+                                    <div class="alert alert-info text-center info-message-content mar-top15 mar-bottom15">
+                                        <p>Obecnie nie posiadasz żadnego ogłoszenia.</p>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($this->alert): ?>
+                                    <div class="alert alert-<?= $this->alert['alert']; ?> text-center info-message-content mar-top15 mar-bottom15">
+                                        <p><?= $this->alert['message']; ?></p>
+                                    </div>
+                                <?php endif; ?>
+
+                                <table class="table table-hover">
+                                    <tbody>
+                                    <tr class="header-table">
+                                        <th>Status</th>
+                                        <th>Dane ogłoszenia</th>
+                                        <th>Kwoty</th>
+                                        <th>Oferty</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    <?php foreach ($this->adverts as $advert): ?>
+                                        <tr>
+                                            <td class="project-status">
+                                                <?php $activeType = \Advert\Entity\Advert::getActiveType($advert->getActive()); ?>
+                                                <span class="label label-<?= $activeType->label; ?>"><?= $activeType->name; ?></span>
+                                            </td>
+                                            <td class="project-title">
+                                                <a href="<?= $this->url('advert/view', array('id' => $advert->getId(), 'url' => $advert->getUrl())); ?>"><img
+                                                        class="img-circle pull-left" alt=""
+                                                        src="<?= $this->basePath() . Advert\Entity\Image::IMAGE_PATH_VIEW . $advert->getCompanyId() . DIRECTORY_SEPARATOR . $advert->getImages()->get(0)->getName(); ?>"></a>
+
+                                                <div class="mar-left10 pull-left">
+                                                    <a class="name" href="<?= $this->url('advert/view', array('id' => $advert->getId(), 'url' => $advert->getUrl())); ?>"><?= $advert->getName(); ?></a>
+                                                    <br>
+
+                                                    <div class="small-info">
+                                                        <small>Zakończenie: <span
+                                                                class="<?php if ($advert->isLessOneDay()): ?>red-color<?php endif; ?>"><?= $advert->getHoursToFinishAdvert(); ?></span>
+                                                        </small>
+                                                        <small class="space-line"> |</small>
+                                                        <small>Kategoria: <a href="<?= $this->url('advert/sublist', array('id' => $advert->getCategory()->getId(), 'url' => $advert->getCategory()->getUrl())); ?>"><?= $advert->getCategory()->getName(); ?></a></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="project-completion">
+                                                <small class="first-amount">Najwyższa Oferta:
+                                                    <strong>PLN <?= $advert->getAmount() + 200; ?></strong></small>
+                                                <br/>
+                                            </td>
+                                            <td class="project-actions">
+                                                <?php if($advert->getActive() == \Advert\Entity\Advert::ADVERT_FINISH): ?>
+                                                    <a href="<?= $this->url('advert/edit', array('id' => $advert->getId())) ?>"
+                                                       class="btn btn-primary btn-xs pull-right">Transakcja</a>
+                                                <?php else: ?>
+                                                    <?php if(!$advert->isLessThen(3)): ?>
+                                                        <a href="<?= $this->url('advert/delete', array('id' => $advert->getId())) ?>"
+                                                           type="button" class="btn btn-xs btn-danger mar-left5 pull-right">Usuń</a>
+                                                        <a href="<?= $this->url('advert/edit', array('id' => $advert->getId())) ?>"
+                                                           class="btn btn-white btn-xs pull-right">Edytuj</a>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    </section>
+                </div>
+                <aside class="secondary dashboard-profile">
+                    <section class="module module-narrow module-shallow">
+                        <h2 class="module-heading">Informacje</h2>
+                        <div class="module-content">
+                            <ul class="list-unstyled">
+                                <li><strong>Pakiet:</strong> <span class="text-right"><span class="pakiet pakiet-premium"><?= $pakiet->getName(); ?></span></span></li>
+                                <li><strong>Ranking:</strong>
+                                        <span>
+                                            <?= \Company\Entity\Company::rank($this->company->getRank());  ?>
+                                        </span></li>
+                                <li><strong>Propozycje:</strong> <span class="text-right">10</span></li>
+                                <li><strong>Oferty:</strong> <span class="text-right">10</span></li>
+                                <li><strong>Wiadomości:</strong> <span class="text-right">4</span></li>
+                            </ul>
+                        </div>
+                    </section>
+                    <section class="module module-narrow module-shallow">
+                        <h2 class="module-heading">Płatności
+                            <?php if(!$this->bundlePayments->getPaid()): ?>
+                                <span class="labelbox red pull-right"><?= -$this->bundlePayments->getAmount() ?> zł</span>
+                            <?php else: ?>
+                                <span class="labelbox green pull-right">Brak Należności</span>
+                            <?php endif; ?></h2>
+                        <div class="module-content">
+                            <ul class="list-unstyled">
+                                <li><strong>Pakiet:</strong> <span class="text-right color-red"><b><?= $this->bundlePayments->getAmount() ?> zł</b></span></li>
+                                <li><strong>Tranzakcje:</strong> <span class="text-right">0 zł</span></li>
+                                <li><strong>Transport:</strong> <span class="text-right">0 zł</span></li>
+                                <li><strong>Dodatki:</strong> <span class="text-right">0 zł</span></li>
+                                <li><strong>Poleceni:</strong> <span class="text-right color-green"><b>+20 zł</b></span></li>
+                            </ul>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </section>
+</section>

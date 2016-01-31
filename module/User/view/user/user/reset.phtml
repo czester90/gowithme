@@ -1,0 +1,41 @@
+<?php $this->StylesList(array('css/login.css')); ?>
+
+<div class="contents">
+  <div class="login-zfc-user">
+    <form id="login-form-user-hide" class="loginForm" method="POST">
+      <h1>Enter your new password</h1>
+      <?php if($this->flashMessenger()->getInfoMessages()): ?>
+        <?php foreach($this->flashMessenger()->getInfoMessages() as $message): ?>
+          <div class="alert">
+            <?php echo $message; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+
+      <?php if($this->flashMessenger()->getErrorMessages()): ?>
+        <?php foreach($this->flashMessenger()->getErrorMessages() as $message): ?>
+          <div class="alert alert-error">
+            <?php echo $message; ?>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+      <ul class="userLogin">
+        <li class="loginUsername">
+          <input type="password" placeholder="Password" class="login_username" name="password">
+        </li>
+        <li class="loginUsername">
+          <input type="password" placeholder="Repeat Password" class="login_username" name="password2">
+        </li>        
+      </ul>
+
+      <div class="formFooter">
+        <div class="formFooterButtons">
+          <input type="submit" value="Change Password" class="login_submit formFooterButtons rounded Button primary Module large hasText btn" name="submit">
+        </div>
+
+        <span class="loginpanel"><a href="<?= $this->url('user/login') ?>" >Log in Panel</a></span>
+      </div>  
+    </form>
+  </div>
+</div>
+<?php echo $this->test; ?>

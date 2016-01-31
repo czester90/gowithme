@@ -1,0 +1,11 @@
+<?php
+    $bundle = $this->getRepos('Company\Entity\BundlePayments')->findOneBy(array('company_id' => $this->UserIdentity()->getCompanyId()), array('created_at' => 'DESC'));
+    $pakiet = $this->getRepos('Company\Entity\BundleDetails')->find($bundle->getPakiet());
+?>
+<?php if(!$bundle->getPaid()): ?>
+<div class="flash-messages">
+    <div class="alert alert-warning text-center">
+        <p>Nie możesz korzystać z wybrane pakietu. Pakiet <strong><?= $pakiet->getName(); ?></strong> jest <strong><abbr title="Przejdź do zakładki Płatności aby w szybki sposób móc aktywować usługę.">Nieaktywny</abbr></strong>. Opłać pakiet by móc w pełni korzystać z funkcjonalności serwisu.</p>
+    </div>
+</div>
+<?php endif; ?>

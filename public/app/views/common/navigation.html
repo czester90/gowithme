@@ -1,0 +1,38 @@
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <ul side-navigation class="nav metismenu" id="side-menu">
+            <li class="nav-header">
+
+                <div class="dropdown profile-element" dropdown>
+                    <img alt="image" class="img-circle" src="img/profile_small.jpg"/>
+                    <a class="dropdown-toggle" dropdown-toggle href>
+                            <span class="clear">
+                                <span class="block m-t-xs">
+                                    <strong class="font-bold">{{user.first_name}} {{user.last_name}}</strong>
+                             </span>
+                                <span class="text-muted text-xs block">{{user.name}} <b class="caret"></b></span>
+                            </span>
+                    </a>
+                    <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                        <li><a ui-sref="settings">{{ 'PROFILE' | translate }}</a></li>
+                        <li class="divider"></li>
+                        <li><a ui-sref="logout">Logout</a></li>
+                    </ul>
+                </div>
+                <div class="logo-element">
+                    IN+
+                </div>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="app.dashboard"><i class="fa fa-th-large"></i> <span class="nav-label">{{ 'DASHBOARD' | translate }}</span> </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="adverts"><i class="fa fa-pie-chart"></i> <span class="nav-label">{{ 'ADVERTS' | translate }}</span> </a>
+            </li>
+            <li ui-sref-active="active">
+                <a ui-sref="myadverts"><i class="fa fa-flask"></i> <span class="nav-label">{{ 'MY_ADVERTS' | translate }}</span></a>
+            </li>
+        </ul>
+
+    </div>
+</nav>
